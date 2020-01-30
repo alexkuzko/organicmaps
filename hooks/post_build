@@ -1,0 +1,22 @@
+#!/bin/bash
+# https://docs.docker.com/docker-cloud/builds/advanced/
+
+echo "*** hooks/post_build"
+
+VERSION=$(git describe --tags --always)
+COMMIT=$(git rev-parse HEAD)
+URL=$(git config --get remote.origin.url)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+for V in {VERSION,COMMIT,URL,BRANCH,DATE,SOURCE_BRANCH,SOURCE_COMMIT,COMMIT_MSG,DOCKER_REPO,DOCKERFILE_PATH,DOCKER_TAG,IMAGE_NAME}; do
+echo $(eval "echo $V: \$${V}")
+done
+for I in {full,full-debug,generator,generator-debug}; do
+docker build \
+  --build-arg VERSION="${VERSION}" \
+  --build-arg COMMIT="${COMMIT}" \
+  --build-arg URL="${URL}" \
+  --build-arg BRANCH="${BRANCH}" \
+  --build-arg DATE="${DATE}" \
+-t "${DOCKER_REPO}:${BRANCH}-${I}" "${DOCKERFILE_PATH}.${I}"
+done

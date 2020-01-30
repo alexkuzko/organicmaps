@@ -1,0 +1,34 @@
+ARG BRANCH
+FROM alexkuzko/omim:${BRANCH}-base as base
+
+RUN cd /srv/omim \
+    && (echo | ./configure.sh) \
+    && (./tools/unix/build_omim.sh -sr generator_tool) \
+    && (bash omim/tools/unix/run_tests.sh -b omim-build-release && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
+
+FROM mapsme/ci-linux
+
+ARG BRANCH
+ARG COMMIT
+ARG DATE
+ARG URL
+ARG VERSION
+MAINTAINER alex@kuzko.com
+
+LABEL org.label-schema.schema-version="1.0" \
+    org.label-schema.build-date=$DATE \
+    org.label-schema.vendor="Aliaksandr Kuzko" \
+    org.label-schema.name="alexkuzko/omim" \
+    org.label-schema.description="Manual builds of the https://github.com/mapsme/omim/ based on official CI Linux image." \
+    org.label-schema.url="https://github.com/alexkuzko/omim" \
+    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -it alexkuzko/omim:$VERSION" \
+    org.label-schema.version="$VERSION" \
+    org.label-schema.vcs-url=$URL \
+    org.label-schema.vcs-branch=$BRANCH \
+    org.label-schema.vcs-ref=$COMMIT
+
+WORKDIR /srv
+
+COPY --from=base /srv/omim-build-release /srv/omim-build-release
+
+CMD ["true"]

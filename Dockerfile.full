@@ -1,5 +1,5 @@
-ARG BRANCH
-FROM alexkuzko/omim:${BRANCH}-base as base
+ARG SOURCE_BRANCH
+FROM alexkuzko/omim:${SOURCE_BRANCH}-base as base
 
 RUN cd /srv/omim \
     && (echo | ./configure.sh) \
@@ -13,6 +13,7 @@ ARG COMMIT
 ARG DATE
 ARG URL
 ARG VERSION
+ARG SOURCE_BRANCH
 MAINTAINER alex@kuzko.com
 
 LABEL org.label-schema.schema-version="1.0" \

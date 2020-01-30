@@ -4,6 +4,7 @@ ARG COMMIT
 ARG DATE
 ARG URL
 ARG VERSION
+ARG SOURCE_BRANCH
 MAINTAINER alex@kuzko.com
 
 LABEL org.label-schema.schema-version="1.0" \
@@ -20,6 +21,6 @@ LABEL org.label-schema.schema-version="1.0" \
 
 WORKDIR /srv
 
-RUN git clone --single-branch --branch $BRANCH --recursive --depth=1 https://github.com/mapsme/omim
+RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/mapsme/omim
 
 CMD ["true"]

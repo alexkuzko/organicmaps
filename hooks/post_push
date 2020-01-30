@@ -3,13 +3,12 @@
 
 echo "*** hooks/post_push"
 
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-for V in {BRANCH,DOCKER_REPO}; do
+for V in {SOURCE_BRANCH,DOCKER_REPO}; do
 echo $(eval "echo $V: \$${V}")
 done
 for I in {full,full-debug,generator,generator-debug}; do
-docker push "${DOCKER_REPO}:${BRANCH}-${I}"
+docker push "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}"
 done
 
-docker tag "${DOCKER_REPO}:${BRANCH}-full" "${DOCKER_REPO}:latest"
+docker tag "${DOCKER_REPO}:${SOURCE_BRANCH}-full" "${DOCKER_REPO}:latest"
 docker push "${DOCKER_REPO}:latest"

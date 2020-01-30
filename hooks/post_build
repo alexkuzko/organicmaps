@@ -18,5 +18,6 @@ docker build \
   --build-arg URL="${URL}" \
   --build-arg BRANCH="${BRANCH}" \
   --build-arg DATE="${DATE}" \
--t "${DOCKER_REPO}:${BRANCH}-${I}" "${DOCKERFILE_PATH}.${I}"
+  --build-arg SOURCE_BRANCH="${SOURCE_BRANCH}" \
+-t "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" -f "${DOCKERFILE_PATH}.${I}" .
 done

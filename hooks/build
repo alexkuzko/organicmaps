@@ -8,6 +8,20 @@ COMMIT=$(git rev-parse HEAD)
 URL=$(git config --get remote.origin.url)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# workaround for two steps build
+if [[ ${DOCKERFILE_PATH} == 'Dockerfile.release' ]]; then
+    echo "do not change the SOURCE_BRANCH"
+else
+    if [[ ${SOURCE_BRANCH} =~ "-base" ]]; then
+    echo -n "chaning SOURCE_BRANCH from $SOURCE_BRANCH to "
+    SOURCE_BRANCH=${SOURCE_BRANCH::-5}; # remove the -base from the source tag
+    echo "$SOURCE_BRANCH"
+    else
+    echo "SHOULD NOT HAPPENS, the SOURCE_BRANCH was not changed while should be"; exit 1;
+    fi;
+fi
+
 for V in {VERSION,COMMIT,URL,BRANCH,DATE,SOURCE_BRANCH,SOURCE_COMMIT,COMMIT_MSG,DOCKER_REPO,DOCKERFILE_PATH,DOCKER_TAG,IMAGE_NAME}; do
 echo $(eval "echo $V: \$${V}")
 done

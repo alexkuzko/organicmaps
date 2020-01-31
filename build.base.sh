@@ -11,3 +11,5 @@ bash hooks/build
 
 echo "Pushing to Docker Hub"
 docker push "${DOCKER_REPO}:${DOCKER_TAG}"
+
+echo "DONE"

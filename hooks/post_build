@@ -11,7 +11,9 @@ DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 for V in {VERSION,COMMIT,URL,BRANCH,DATE,SOURCE_BRANCH,SOURCE_COMMIT,COMMIT_MSG,DOCKER_REPO,DOCKERFILE_PATH,DOCKER_TAG,IMAGE_NAME}; do
 echo $(eval "echo $V: \$${V}")
 done
-for I in {full,full-debug,generator,generator-debug}; do
+# workaround for two steps build
+if [[ ${DOCKERFILE_PATH} == 'Dockerfile.release' ]]; then
+for I in {full-debug,generator,generator-debug}; do # we skip build for 'full' as it symlinked to DOCKERFILE_REPO already
 docker build \
   --build-arg VERSION="${VERSION}" \
   --build-arg COMMIT="${COMMIT}" \
@@ -19,5 +21,15 @@ docker build \
   --build-arg BRANCH="${BRANCH}" \
   --build-arg DATE="${DATE}" \
   --build-arg SOURCE_BRANCH="${SOURCE_BRANCH}" \
--t "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" -f "${DOCKERFILE_PATH}.${I}" .
+-t "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" -f "${DOCKERFILE_PATH}" .
 done
+else
+docker build \
+  --build-arg VERSION="${VERSION}" \
+  --build-arg COMMIT="${COMMIT}" \
+  --build-arg URL="${URL}" \
+  --build-arg BRANCH="${BRANCH}" \
+  --build-arg DATE="${DATE}" \
+  --build-arg SOURCE_BRANCH="${SOURCE_BRANCH}" \
+-t "${DOCKER_REPO}:${SOURCE_BRANCH}" -f "${DOCKERFILE_PATH}" .
+fi

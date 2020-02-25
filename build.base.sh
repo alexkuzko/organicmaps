@@ -7,9 +7,9 @@ export DOCKER_REPO=index.docker.io/alexkuzko/omim
 export DOCKERFILE_PATH=Dockerfile
 export DOCKER_TAG=$1
 export SOURCE_BRANCH=$1
-bash hooks/build
-
-echo "Pushing to Docker Hub"
-docker push "${DOCKER_REPO}:${DOCKER_TAG}"
-
-echo "DONE"
+bash hooks/build && \
+bash hooks/post_build && \
+bash hooks/post_push && \
+echo "Pushing to Docker Hub" && \
+docker push "${DOCKER_REPO}:${DOCKER_TAG}" && \
+echo "DONE" || { echo "ERROR"; exit 1; }

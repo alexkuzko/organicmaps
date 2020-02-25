@@ -14,11 +14,11 @@ if [[ ${DOCKERFILE_PATH} == 'Dockerfile.release' ]]; then
     echo "do not change the SOURCE_BRANCH"
 else
     if [[ ${SOURCE_BRANCH} =~ "-base" ]]; then
-    echo -n "chaning SOURCE_BRANCH from $SOURCE_BRANCH to "
+    echo -n "changing SOURCE_BRANCH from $SOURCE_BRANCH to "
     SOURCE_BRANCH=${SOURCE_BRANCH::-5}; # remove the -base from the source tag
     echo "$SOURCE_BRANCH"
     else
-    echo "SHOULD NOT HAPPENS, the SOURCE_BRANCH was not changed while should be"; exit 1;
+    echo "*** hook/build FAILED: SHOULD NOT HAPPENS, the SOURCE_BRANCH was not changed while should be"; exit 1;
     fi;
 fi
 
@@ -32,4 +32,4 @@ docker build \
   --build-arg BRANCH="${BRANCH}" \
   --build-arg DATE="${DATE}" \
   --build-arg SOURCE_BRANCH="${SOURCE_BRANCH}" \
--t "${DOCKER_REPO}:${DOCKER_TAG}" -f "${DOCKERFILE_PATH}" .
+-t "${DOCKER_REPO}:${DOCKER_TAG}" -f "${DOCKERFILE_PATH}" . || { echo "*** hooks/build FAILED"; exit 1; }

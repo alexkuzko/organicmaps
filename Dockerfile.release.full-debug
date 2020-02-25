@@ -1,13 +1,6 @@
 ARG SOURCE_BRANCH
 FROM alexkuzko/omim:${SOURCE_BRANCH}-base as base
 
-RUN cd /srv/omim \
-    && (echo | ./configure.sh) \
-    && (./tools/unix/build_omim.sh -d) \
-    && (bash omim/tools/unix/run_tests.sh -b omim-build-debug && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
-
-FROM mapsme/ci-linux
-
 ARG BRANCH
 ARG COMMIT
 ARG DATE
@@ -28,8 +21,10 @@ LABEL org.label-schema.schema-version="1.0" \
     org.label-schema.vcs-branch=$BRANCH \
     org.label-schema.vcs-ref=$COMMIT
 
-WORKDIR /srv
-
-COPY --from=base /srv/omim-build-debug /srv/omim-build-debug
+RUN cd /srv/omim \
+    && (echo | ./configure.sh) \
+    && (./tools/unix/build_omim.sh -d) \
+    && (cd /srv/omim/tools/python/maps_generator && pip3 install -r requirements.txt && /bin/cp -pf var/etc/map_generator.ini.default var/etc/map_generator.ini && cd /srv) \
+    && (bash /srv/omim/tools/unix/run_tests.sh -b /srv/omim-build-debug && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
 
 CMD ["true"]

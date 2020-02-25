@@ -21,7 +21,7 @@ docker build \
   --build-arg BRANCH="${BRANCH}" \
   --build-arg DATE="${DATE}" \
   --build-arg SOURCE_BRANCH="${SOURCE_BRANCH}" \
--t "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" -f "${DOCKERFILE_PATH}" .
+-t "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" -f "${DOCKERFILE_PATH}.${I}" . || { echo "*** hooks/post_build FAILED"; exit 1; }
 done
 else
 echo "no custom post_build for base image"

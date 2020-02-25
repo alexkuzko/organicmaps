@@ -9,9 +9,9 @@ done
 if [[ ${DOCKERFILE_PATH} == 'Dockerfile.release' ]]; then
 docker tag "${DOCKER_REPO}:${SOURCE_BRANCH}" "${DOCKER_REPO}:${SOURCE_BRANCH}-full" # we need to tag default image with full
 docker tag "${DOCKER_REPO}:${SOURCE_BRANCH}" "${DOCKER_REPO}:latest"
-docker push "${DOCKER_REPO}:latest"
+docker push "${DOCKER_REPO}:latest" || { echo "*** hooks/post_push FAILED"; exit 1; }
 for I in {full,full-debug,generator,generator-debug}; do
-docker push "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}"
+docker push "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" || { echo "*** hooks/post_push FAILED"; exit 1; }
 done
 else
 echo "no custom post_push for base image"

@@ -13,13 +13,13 @@ LABEL org.label-schema.schema-version="1.0" \
     org.label-schema.name="alexkuzko/omim" \
     org.label-schema.description="Manual builds of the https://github.com/mapsme/omim/ based on official CI Linux image." \
     org.label-schema.url="https://github.com/alexkuzko/omim" \
-    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -it alexkuzko/omim:$VERSION" \
+    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -it alexkuzko/omim:$VERSION" \
     org.label-schema.version="$VERSION" \
     org.label-schema.vcs-url=$URL \
     org.label-schema.vcs-branch=$BRANCH \
     org.label-schema.vcs-ref=$COMMIT
 
-WORKDIR /srv
+WORKDIR /root
 
 RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/mapsme/omim && /bin/rm -rf omim/.git
 

@@ -11,10 +11,10 @@ Example:
 The build process (Docker Hub Automated Build) two steps for a reason as outlined above. Unfortunately, it also caused the dirty hooks conditions as we need decide what step we are at. Input is very welcome!
 
 First of all we need to prepare base image by creating tag `release-XXX-base`. In few hours (!) we get the DockerHub base image `alexkuzko/omim` with tag `release-XXX-base`.
-It is possible to omit the creation of `release-XXX-base` tag and directly build and push it to save time by executing `build.base.sh` script from the root of this repository (this repository and Docker Hub Registry owner only).
+It is possible to omit the creation of `release-XXX-base` tag and directly build and push it to save time by executing `build.sh` script from the root of this repository (this repository and Docker Hub Registry owner only).
 
 Second step triggered by creating tag `release-XXX` to build DockerHub image `alexkuzko/omim`  with primary tag `release-XXX` (it also tagged as `release-XXX-full` and `latest`). Additionally we build images with tags `release-XXX-full-debug`, `release-XXX-generator` and `release-XXX-generator-debug`.
-** IMPORTANT**: Same performance issue affects automated build, the script `build.release.sh` made to perform local build.
+** IMPORTANT**: Same performance issue affects automated build, the script `build.sh` may be used to perform local build.
 
 Automated Build setup to trigger on:
 

@@ -3,8 +3,8 @@
 
 echo "*** hooks/build"
 
-VERSION=$(git describe --tags --always)
 COMMIT=$(git rev-parse HEAD)
+VERSION=$(git describe --contains ${COMMIT})
 URL=$(git config --get remote.origin.url)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

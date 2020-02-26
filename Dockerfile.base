@@ -21,6 +21,6 @@ LABEL org.label-schema.schema-version="1.0" \
 
 WORKDIR /root
 
-RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/mapsme/omim && /bin/rm -rf omim/.git
+RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/mapsme/omim
 
 CMD ["true"]

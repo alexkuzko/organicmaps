@@ -11,6 +11,7 @@ docker tag "${DOCKER_REPO}:${SOURCE_BRANCH}" "${DOCKER_REPO}:${SOURCE_BRANCH}-fu
 docker tag "${DOCKER_REPO}:${SOURCE_BRANCH}" "${DOCKER_REPO}:latest"
 docker push "${DOCKER_REPO}:latest" || { echo "*** hooks/post_push FAILED"; exit 1; }
 for I in {full,full-debug,generator,generator-debug}; do
+if [[ "${I}" =~ "-debug" ]] && [[ -z "${1}" ]]; then echo "skipped debug push for ${I}"; continue; else echo "pushing ${I}"; fi;
 docker push "${DOCKER_REPO}:${SOURCE_BRANCH}-${I}" || { echo "*** hooks/post_push FAILED"; exit 1; }
 done
 else

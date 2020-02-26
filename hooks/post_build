@@ -14,6 +14,7 @@ done
 # workaround for two steps build
 if [[ ${DOCKERFILE_PATH} == 'Dockerfile.release' ]]; then
 for I in {full-debug,generator,generator-debug}; do # we skip build for 'full' as it symlinked to DOCKERFILE_REPO already
+if [[ ${I} =~ "-debug" ]] && [[ -z "${1}" ]]; then echo "skipped debug build for ${I}"; continue; else echo "building ${I}"; fi;
 docker build \
   --build-arg VERSION="${VERSION}" \
   --build-arg COMMIT="${COMMIT}" \

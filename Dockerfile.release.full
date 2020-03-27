@@ -27,4 +27,7 @@ RUN cd /root/omim \
     && (cd /root/omim/tools/python/maps_generator && pip3 install -r requirements.txt && /bin/cp -pf var/etc/map_generator.ini.default var/etc/map_generator.ini && cd /root) \
     && (bash /root/omim/tools/unix/run_tests.sh -b /root/omim-build-release && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
 
+ENV LANG en_US.UTF-8
+ENV PYTHONPATH /root/omim/tools/python
+
 CMD ["true"]

@@ -1,4 +1,4 @@
-FROM mapsme/ci-linux
+FROM python:3.6
 ARG BRANCH
 ARG COMMIT
 ARG DATE
@@ -10,10 +10,10 @@ MAINTAINER alex@kuzko.com
 LABEL org.label-schema.schema-version="1.0" \
     org.label-schema.build-date=$DATE \
     org.label-schema.vendor="Aliaksandr Kuzko" \
-    org.label-schema.name="alexkuzko/omim" \
-    org.label-schema.description="Manual builds of the https://github.com/mapsme/omim/ based on official CI Linux image." \
-    org.label-schema.url="https://github.com/alexkuzko/omim" \
-    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -it alexkuzko/omim:$VERSION" \
+    org.label-schema.name="alexkuzko/organicmaps" \
+    org.label-schema.description="Manual builds of the https://github.com/organicmaps/organicmaps/ based on Python image." \
+    org.label-schema.url="https://github.com/alexkuzko/organicmaps" \
+    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION" \
     org.label-schema.version="$VERSION" \
     org.label-schema.vcs-url=$URL \
     org.label-schema.vcs-branch=$BRANCH \
@@ -21,6 +21,6 @@ LABEL org.label-schema.schema-version="1.0" \
 
 WORKDIR /root
 
-RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/mapsme/omim
+RUN git clone --single-branch --branch $SOURCE_BRANCH --recursive --depth=1 https://github.com/organicmaps/organicmaps && rm -rf .git
 
 CMD ["true"]

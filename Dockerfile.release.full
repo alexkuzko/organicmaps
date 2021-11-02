@@ -1,5 +1,5 @@
 ARG SOURCE_BRANCH
-FROM alexkuzko/omim:${SOURCE_BRANCH}-base as base
+FROM alexkuzko/organicmaps:${SOURCE_BRANCH}-base as base
 
 ARG BRANCH
 ARG COMMIT
@@ -7,27 +7,48 @@ ARG DATE
 ARG URL
 ARG VERSION
 ARG SOURCE_BRANCH
+ARG TZ=Etc/UTC
+
 MAINTAINER alex@kuzko.com
 
 LABEL org.label-schema.schema-version="1.0" \
     org.label-schema.build-date=$DATE \
     org.label-schema.vendor="Aliaksandr Kuzko" \
-    org.label-schema.name="alexkuzko/omim" \
-    org.label-schema.description="Manual builds of the https://github.com/mapsme/omim/ based on official CI Linux image." \
-    org.label-schema.url="https://github.com/alexkuzko/omim" \
-    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -it alexkuzko/omim:$VERSION" \
+    org.label-schema.name="alexkuzko/organicmaps" \
+    org.label-schema.description="Manual builds of the https://github.com/organicmaps/organicmaps/ based on Python image." \
+    org.label-schema.url="https://github.com/alexkuzko/organicmaps" \
+    org.label-schema.docker.cmd="docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION" \
     org.label-schema.version="$VERSION" \
     org.label-schema.vcs-url=$URL \
     org.label-schema.vcs-branch=$BRANCH \
     org.label-schema.vcs-ref=$COMMIT
 
-RUN cd /root/omim \
-    && (echo | ./configure.sh) \
-    && (./tools/unix/build_omim.sh -r) \
-    && (cd /root/omim/tools/python/maps_generator && pip3 install -r requirements.txt && /bin/cp -pf var/etc/map_generator.ini.default var/etc/map_generator.ini && cd /root) \
-    && (bash /root/omim/tools/unix/run_tests.sh -b /root/omim-build-release && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
-
 ENV LANG en_US.UTF-8
-ENV PYTHONPATH /root/omim/tools/python
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5svg5-dev \
+    libgl1-mesa-dev \
+    libsqlite3-dev \
+    zlib1g-dev \
+    tzdata \
+    locales-all \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+ENV CMAKE_CONFIG -DSKIP_TESTS=true
+RUN cd /root/organicmaps \
+    && (echo | ./configure.sh) \
+    && echo "# FIX FOR GL ERRORS" && (echo 'add_link_options("-lGL")' && cat CMakeLists.txt) > CMakeLists.txt.tmp && /bin/mv -f CMakeLists.txt.tmp CMakeLists.txt \
+    && (./tools/unix/build_omim.sh -r) \
+    && (cd /root/organicmaps/tools/python/maps_generator && pip3 install -r requirements.txt && /bin/cp -pf var/etc/map_generator.ini.default var/etc/map_generator.ini && cd /root) \
+    && (bash /root/organicmaps/tools/unix/run_tests.sh -b /root/omim-build-release && echo "TEST PASSED" || { echo "TEST FAILED"; true; })
+
+ENV PYTHONPATH /root/organicmaps/tools/python
 
 CMD ["true"]

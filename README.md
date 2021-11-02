@@ -1,4 +1,4 @@
-# omim
+# organicmaps (previously omim)
 
 Manual builds of the https://github.com/organicmaps/organicmaps/ based on Python image
 
@@ -9,19 +9,19 @@ Example:
 
 **IMPORTANT**: Due performance issues with DockerHub Automated Build these builds are separated!
 
-The build process (Docker Hub Automated Build) two steps for a reason as outlined above. Unfortunately, it also caused the dirty hooks conditions as we need decide what step we are at. Input is very welcome!
+The build process (previously it was Docker Hub Automated Build) is two steps for a reason as outlined above. Unfortunately, it also caused the dirty hooks conditions as we need decide what step we are at. Input is very welcome!
 
 First of all we need to prepare base image by creating tag `release-XXX-base`. In few hours (!) we get the DockerHub base image `alexkuzko/organicmaps` with tag `release-XXX-base`.
 It is possible to omit the creation of `release-XXX-base` tag and directly build and push it to save time by executing `build.sh` script from the root of this repository (this repository and Docker Hub Registry owner only).
 
 Second step triggered by creating tag `release-XXX` to build DockerHub image `alexkuzko/organicmaps`  with primary tag `release-XXX` (it also tagged as `release-XXX-full` and `latest`). Additionally we build images with tags `release-XXX-full-debug`, `release-XXX-generator` and `release-XXX-generator-debug`.
-** IMPORTANT**: Same performance issue affects automated build, the script `build.sh` may be used to perform local build.
+**IMPORTANT**: Same performance issue affects automated build, the script `build.sh` may be used to perform local build.
 
-** DEBUG BUILDS: ** Due build issues with debig builds (they fail too often) they are no longer built/pushed automatically via `hooks/post_build / hooks/post_push` scripts unless argument passed. This means it may be built only using `build.sh` with additional second param passed.
+**DEBUG BUILDS**: Due build issues with debig builds (they fail too often) they are no longer built/pushed automatically via `hooks/post_build / hooks/post_push` scripts unless argument passed. This means it may be built only using `build.sh` with additional second param passed.
 
-** TESTS SKIP: *** Due to the issue described here () we need to add `CMAKE_CONFIG=-DSKIP_TESTS=true` during the release build.
+**TESTS SKIP**: Due to the issue described in https://github.com/organicmaps/organicmaps/issues/1436 we need to add `CMAKE_CONFIG=-DSKIP_TESTS=true` during the release build.
 
-Automated Build setup to trigger on:
+Automated Build were setup to trigger on:
 
 Base image:
 * Source Type: Tag
@@ -45,30 +45,36 @@ In order to run you need to prepare the environment first by creating scratch (t
 
 Optionally you need to pass map_generator.ini to override default value for planet (map).
 To get the default file execute this command:
-`docker run --rm alexkuzko/organicmaps cat /root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini`
+```
+docker run --rm alexkuzko/organicmaps cat /root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini
+```
 Then either fill it with `PLANET_URL` and `PLANET_MD5_URL` directly from geofabrik or use the local maps from source directory.
 
 Geofabrik example:
-``
+```
 PLANET_URL: https://download.geofabrik.de/europe/moldova-latest.osm.pbf
 PLANET_MD5_URL: https://download.geofabrik.de/europe/moldova-latest.osm.pbf.md5
-``
+```
 
 Local example:
-``
+```
 PLANET_URL: file:///srv/source/moldova-latest.osm.pbf
 PLANET_MD5_URL: file:///srv/source/moldova-latest.osm.pbf.md5
-``
+```
 
-** NOTE: ** Coasts file may be passed in similar way. Generator expect them to be named as: `latest_coasts.geom` and `latest_coasts.rawgeom`
+**NOTE**: Coasts file may be passed in similar way. Generator expect them to be named as: `latest_coasts.geom` and `latest_coasts.rawgeom`
 
 The partial command (it just opens the shell, generator example is below):
-`docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION"`
+```
+docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION"
+```
 
 The one-liner command to generate Moldova map:
-`docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION" bash -c "python3 -m maps_generator --countries=\"Moldova\" --skip=ExternalResources,UpdatePlanet,Coastline,Srtm,IsolinesInfo`
+```
+docker run -v /PATH/TO/SCRATCH/root:/root/maps_build -v /PATH/TO/SCRATCH/target:/srv/target -v /PATH/TO/SOURCE:/srv/source -v /PATH/TO/OPTIONAL/CONFIG:/root/organicmaps/tools/python/maps_generator/var/etc/map_generator.ini -it alexkuzko/organicmaps:$VERSION" bash -c "python3 -m maps_generator --countries=\"Moldova\" --skip=ExternalResources,UpdatePlanet,Coastline,Srtm,IsolinesInfo
+```
 
-** NOTE: ** It is highly advised to use `--countries="FIRST,SECOND,etc."` as an option to limit the map(s) to be created.
+**NOTE**: It is highly advised to use `--countries="FIRST,SECOND,etc."` as an option to limit the map(s) to be created.
 
 ## TODO
 
